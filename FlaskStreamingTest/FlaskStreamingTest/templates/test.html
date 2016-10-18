@@ -1,0 +1,37 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>{{ title }}.</h2>
+<h3>{{ message }}</h3>
+
+<div id="progress">
+    <p>Use this area to provide additional information.</p>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/test/io');
+
+        socket.on('start', function (msg) {
+            $('#progress').append('<p>Processing started...</p>');
+        });
+
+        socket.on('progress', function (msg) {
+            $('#progress').append(msg.data);
+        });
+
+        socket.on('end', function (msg) {
+            $('#progress').append('<p>Processing finished.</p>');
+            socket.disconnect();
+        });
+
+        socket.emit('start');
+    });
+</script>
+
+{% endblock %}
