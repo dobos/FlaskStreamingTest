@@ -5,7 +5,7 @@ Routes and views for the flask application.
 from datetime import datetime
 from flask import render_template, session
 from FlaskStreamingTest import app
-from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_socketio import SocketIO, emit, join_room, leave_room, close_room
 import gevent
 from gevent import monkey
 import uuid
@@ -68,6 +68,7 @@ def test_disconnect():
     sessionid = session.get('id')
     print('Client disconnected with sessionid: %s' % sessionid)
     leave_room(sessionid)
+    close_room(sessionid)
 
 @socketio.on('start', namespace='/test/io')
 def test_start(data):
@@ -79,7 +80,7 @@ def test_start(data):
     print('Data sent:')
     print(data)
     socketio.start_background_task(worker, session.get('id'), data)
-    #bgw = gevent.spawn(worker, session.get('id'), data)
+    socketio.sleep()
 
 def worker(sessionid, data):
     socketio.emit('start', namespace='/test/io', room=sessionid)
