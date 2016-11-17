@@ -10,8 +10,9 @@ import gevent
 from gevent import monkey
 import uuid
 
-monkey.patch_all()
-socketio = SocketIO(app, async_mode='gevent')
+#monkey.patch_all()
+#socketio = SocketIO(app, async_mode='gevent')
+socketio = SocketIO(app, async_mode='threading')
 
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
